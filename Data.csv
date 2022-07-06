@@ -1,3 +1,4 @@
 id;class;standart;size;images
-1;Болты;AS 1427;[2.5, 3, 3.5, 4, 5, 6, 8, 10];[Images/1/1.png, Images/1/2.png, Images/1/3.png, Images/1/4.png, Images/1/top_1.png, Images/1/top_2.png]
-2;Болты;ГОСТ 11644-75;[2, 2.5, 3, 3.5, 4, 5, 6, 8, 10];[Images/2/1.png, Images/2/2.png, Images/2/3.png, Images/2/4.png, Images/2/top_1.png, Images/2/top_2.png]
+1;Болты;AS 1427;M2.5x4;[Images/1/1.png, Images/1/2.png, Images/1/3.png, Images/1/4.png, Images/1/top_1.png, Images/1/top_2.png]
+2;Болты;ГОСТ 11644-75;M2x3;[Images/2/1.png, Images/2/2.png, Images/2/3.png, Images/2/4.png, Images/2/top_1.png, Images/2/top_2.png]
+3;Болты;ISO 1580;M1.6x2;[Images/3/1.png, Images/3/2.png, Images/3/3.png, Images/3/4.png, Images/3/top_1.png, Images/3/top_2.png]
