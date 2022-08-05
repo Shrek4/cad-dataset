@@ -44,18 +44,18 @@ function sendData(res, data, err) {
 }
 
 const parts = [];
-fs.createReadStream('Data.csv')
-  .pipe(csv({ separator: ';' }))
-  .on('data', (data) => parts.push(data))
-  .on('end', () => {
-    console.log("parts ok")
-  });
-// fs.createReadStream('Parts.csv')
+// fs.createReadStream('Data.csv')
 //   .pipe(csv({ separator: ';' }))
 //   .on('data', (data) => parts.push(data))
 //   .on('end', () => {
 //     console.log("parts ok")
 //   });
+fs.createReadStream('Parts.csv')
+  .pipe(csv({ separator: ';' }))
+  .on('data', (data) => parts.push(data))
+  .on('end', () => {
+    console.log("parts ok")
+  });
 const standarts = [];
 fs.createReadStream('Standarts.csv')
   .pipe(csv({ separator: ';' }))
@@ -77,43 +77,52 @@ fs.createReadStream('Images_categories.csv')
   .on('end', () => {
     console.log("categories ok")
   });
-const images = [];
-fs.createReadStream('Images.csv')
-  .pipe(csv({ separator: ';' }))
-  .on('data', (data) => images.push(data))
-  .on('end', () => {
-    console.log("images ok")
-  });
+// const images = [];
+// fs.createReadStream('Images.csv')
+//   .pipe(csv({ separator: ';' }))
+//   .on('data', (data) => images.push(data))
+//   .on('end', () => {
+//     console.log("images ok")
+//   });
 
 function getClass(class_id) {
   return classes.map(sas=>{
     if(sas.id==class_id) return sas.name
-  })[0]
+  }).filter(anyValue => typeof anyValue !== 'undefined')[0]
 }
 
 function getStandart(standart_id) {
   return standarts.map(sas=>{
     if(sas.id==standart_id) return sas.name
-  })[0]
+  }).filter(anyValue => typeof anyValue !== 'undefined')[0]
 }
 
 function getImages(part_id) {
   cat_id=parts.map(sas=>{
     if(sas.id==part_id) 
       return sas.image_category
-  })[0]
+  }).filter(anyValue => typeof anyValue !== 'undefined')[0]
+
   cat_name=im_categories.map(sas=>{
     if(sas.id==cat_id) 
       return sas.folder
-  })[0]
-  return images.map(sas=>{
-    if(sas.category_id==cat_id) return cat_name+sas.image_name
+  }).filter(anyValue => typeof anyValue !== 'undefined')[0]
+  // return images.map(sas=>{
+  //   if(sas.category_id==cat_id) return cat_name+'/'+sas.image_name
+  // }).filter(anyValue => typeof anyValue !== 'undefined')
+  data=fs.readdirSync(cat_name+'/');
+  return  data.map(sas=>{
+    return cat_name+'/'+sas
   })
 }
 
 
-
 app.get('/parts', function (req, res) {
-  console.log(getImages(1))
-  sendData(res, parts);
+  data1=[]
+  for(let i=0; i<parts.length; i++){
+    data1.push({id: parts[i].id, class: getClass(parts[i].class_id), standart: getStandart(parts[i].standart_id), size: parts[i].size, images: getImages(parts[i].id)})
+  }
+  sendData(res, data1);
 })
+
+app.use('/images', express.static('Images'));
