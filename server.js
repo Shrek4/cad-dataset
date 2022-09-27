@@ -6,9 +6,6 @@ const csv = require('csv-parser')
 const fs = require('fs')
 
 
-// create application/json parser
-const jsonParser = bodyParser.json()
-
 //Заголовки для CORS
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -24,19 +21,6 @@ app.listen(PORT, () => {
 });
 
 
-function processData(res, sql) {
-  db.serialize(function () {
-    db.all(sql,
-      function (err, rows) {
-        if (err) {
-          console.error(err);
-          res.status(500).send(err);
-        }
-        else
-          sendData(res, rows, err);
-      });
-  });
-}
 
 function sendData(res, data, err) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -126,3 +110,22 @@ app.get('/parts', function (req, res) {
 })
 
 app.use('/images', express.static('Images'));
+
+
+function sendToPython(input) {
+  var { PythonShell } = require('python-shell');
+
+  let options = {
+    mode: 'text',
+    args: [input.value]
+  };
+
+  PythonShell.run('./script.py', options, function (err, results) {
+    if (err) throw err;
+    // результаты - это массив, состоящий из сообщений, собранных во время выполнения
+    console.log('results: ', results);
+    results.textContent = results[0];
+  });
+}
+
+sendToPython("sas")
