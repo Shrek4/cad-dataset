@@ -2,6 +2,7 @@ import cv2
 import os
 from PIL import Image
 import numpy as np
+import csv
 
 
 def make_square(img, max_size, fill_color):
@@ -58,6 +59,33 @@ def makedataset():
         im=cv2.imread(file, cv2.IMREAD_GRAYSCALE)
         cv2.imwrite(os.path.join("Images2",file), prepare(im))
         
-    
 
-makedataset()
+def getData():
+    jsonArray = []
+    #read csv file
+    with open("Data.csv", encoding='utf-8') as csvf: 
+        #load csv file data using csv library's dictionary reader
+        csvReader = csv.DictReader(csvf, delimiter=";") 
+
+        #convert each csv row into python dict
+        for row in csvReader: 
+            #add this python dict to json array
+            jsonArray.append(row)
+    return jsonArray
+
+def makedataset2():
+    data=getData()
+    
+    for item in data:
+        class_ass=None
+        if(item[1]=="Болт/Винт"):
+            class_ass="bolts"
+        elif(item[1]=="Гайка"):
+            class_ass="nuts"
+        elif(item[1]=="Шайба"):
+            class_ass="washers"
+        elif(item[1]=="Подшипник"):
+            class_ass="bearings"
+        cv2.imwrite(os.path.join("cadmnist",class_ass), prepare(im))
+
+makedataset2()

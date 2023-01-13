@@ -72,8 +72,20 @@ def getImCat():
             jsonArray.append(row)
     return jsonArray
 
+def getData():
+    jsonArray = []
+    #read csv file
+    with open("Data.csv", encoding='utf-8') as csvf: 
+        #load csv file data using csv library's dictionary reader
+        csvReader = csv.DictReader(csvf, delimiter=";") 
 
+        #convert each csv row into python dict
+        for row in csvReader: 
+            #add this python dict to json array
+            jsonArray.append(row)
+    return jsonArray
 
+parts_data=getData()
 parts=getParts()
 classes=getClasses()
 standarts=getStandarts()
@@ -93,10 +105,18 @@ def getImages(part_id):
 
 @app.route('/parts')
 def get_parts():
+    # try:
+    #     data=[]
+    #     for i in range(len(parts)):
+    #         data.append({"id": parts[i]['id'], "class": getClass(parts[i]['class_id']), "standart": getStandart(parts[i]['standart_id']), "size": parts[i]['size'], "images": getImages(parts[i]['id'])})
+    #     return data
+    # except Exception as e:
+    #     print(e)
     try:
         data=[]
-        for i in range(len(parts)):
-            data.append({"id": parts[i]['id'], "class": getClass(parts[i]['class_id']), "standart": getStandart(parts[i]['standart_id']), "size": parts[i]['size'], "images": getImages(parts[i]['id'])})
+        for i in range(len(parts_data)):
+            cat_name=parts_data[i]['image_dir']
+            data.append({"id": parts_data[i]['id'], "class": parts_data[i]['class'], "standart": parts_data[i]['standart'], "size": parts_data[i]['size'], "images": [cat_name+'/'+x for x in os.listdir(cat_name)]})
         return data
     except Exception as e:
         print(e)
