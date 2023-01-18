@@ -16,9 +16,6 @@ app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app)
 
-
-
-
 def getParts():
     jsonArray = []
     #read csv file
@@ -86,22 +83,21 @@ def getData():
     return jsonArray
 
 parts_data=getData()
-parts=getParts()
-classes=getClasses()
-standarts=getStandarts()
-im_categories=getImCat()
+# parts=getParts()
+# classes=getClasses()
+# standarts=getStandarts()
+# im_categories=getImCat()
 
-def getClass(class_id):
-    return [x for x in classes if x['id'] == class_id][0]['name']
+# def getClass(class_id):
+#     return [x for x in classes if x['id'] == class_id][0]['name']
 
-def getStandart(standart_id):
-    return [x for x in standarts if x['id'] == standart_id][0]['name']
+# def getStandart(standart_id):
+#     return [x for x in standarts if x['id'] == standart_id][0]['name']
 
-
-def getImages(part_id):
-    cat_id=[x for x in parts if x['id'] == part_id][0]['image_category']
-    cat_name=[x for x in im_categories if x['id'] == cat_id][0]['folder']
-    return [cat_name+'/'+x for x in os.listdir(cat_name)]
+# def getImages(part_id):
+#     cat_id=[x for x in parts if x['id'] == part_id][0]['image_category']
+#     cat_name=[x for x in im_categories if x['id'] == cat_id][0]['folder']
+#     return [cat_name+'/'+x for x in os.listdir(cat_name)]
 
 @app.route('/parts')
 def get_parts():
