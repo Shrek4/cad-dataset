@@ -3,6 +3,7 @@ import os
 from PIL import Image
 import numpy as np
 import csv
+import datetime
 
 
 def make_square(img, max_size, fill_color):
@@ -43,7 +44,7 @@ def prepare(img):
     padded= np.pad(digit, ((5, 5), (5, 5)), "constant", constant_values=0)
     # digit = padded_digit.reshape(1, 100, 100, 1)
     # digit = digit / 255.0
-    squared=make_square(padded, 100, 0)
+    squared=make_square(padded, 150, 0)
 
     ret, th = cv2.threshold(squared, 0, 255, cv2.THRESH_OTSU)
     return th
@@ -75,17 +76,27 @@ def getData():
 
 def makedataset2():
     data=getData()
+    classes=["Болт/Винт","Гайка","Шайба","Подшипник","Сальник"]
     
-    for item in data:
+    for c in classes:
         class_ass=None
-        if(item[1]=="Болт/Винт"):
+        if(c=="Болт/Винт"):
             class_ass="bolts"
-        elif(item[1]=="Гайка"):
+        elif(c=="Гайка"):
             class_ass="nuts"
-        elif(item[1]=="Шайба"):
+        elif(c=="Шайба"):
             class_ass="washers"
-        elif(item[1]=="Подшипник"):
+        elif(c=="Подшипник"):
             class_ass="bearings"
-        cv2.imwrite(os.path.join("cadmnist",class_ass), prepare(im))
+        elif(c=="Сальник"):
+            class_ass="seals"
+        for item in data:
+            if(item["class"]==c):
+                images=os.listdir(item["image_dir"])
+                for image_file in images:
+                    im=cv2.imread(os.path.join(item["image_dir"], image_file), cv2.IMREAD_GRAYSCALE)
+                    name=str(datetime.datetime.now())[-6:]+".jpg"
+                    cv2.imwrite(os.path.join("Images2",class_ass,name), prepare(im))
+
 
 makedataset2()

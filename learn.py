@@ -4,6 +4,7 @@ from keras import models
 from keras.datasets import mnist
 from keras.utils import to_categorical
 
+# mnist
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
 model = models.Sequential()
@@ -33,3 +34,5 @@ test_loss, test_acc = model.evaluate(test_images, test_labels)
 print(test_acc)
 
 model.save('mnist.h5')
+
+
