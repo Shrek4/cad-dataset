@@ -1,9 +1,9 @@
 import cv2
 from keras.models import load_model
 import numpy as np
-FILENAME="img.png"
 
-model = load_model('mnist.h5')
+
+model = load_model('cadmnist.h5')
 
 def Recognize_Digit(input):
 
@@ -23,18 +23,20 @@ def Recognize_Digit(input):
         digit = th[y:y + h, x:x + w]
 
         # Resizing that digit to (18, 18)
-        resized_digit = cv2.resize(digit, (18, 18))
+        resized_digit = cv2.resize(digit, (140, 140))
 
         # Padding the digit with 5 pixels of black color (zeros) in each side to finally produce the image of (28, 28)
         padded_digit = np.pad(resized_digit, ((5, 5), (5, 5)), "constant", constant_values=0)
 
-        digit = padded_digit.reshape(1, 28, 28, 1)
+        # digit = padded_digit.reshape(1, 28, 28, 1)
+        digit = padded_digit.reshape(1, 150, 150, 1)
         digit = digit / 255.0
 
         pred = model.predict([digit])[0]
         final_pred = np.argmax(pred)
+        classes=["bearing", "bolt", "nut", "seal", "washer"]
 
-        data = str(final_pred) + ' ' + str(int(max(pred) * 100)) + '%'
+        data = classes[final_pred] + ' ' + str(int(max(pred) * 100)) + '%'
 
         font = cv2.FONT_HERSHEY_SIMPLEX
         fontScale = 0.5
