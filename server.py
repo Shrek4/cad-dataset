@@ -9,7 +9,7 @@ import os
 import cv2
 from werkzeug.utils import secure_filename
 
-from recognize import Recognize_Digit
+from recognize import Recognize_Part
 PORT=3001
 
 app = Flask(__name__)
@@ -136,7 +136,7 @@ def fileUpload():
     file_dir="recognize_img/"
     f = request.files['file']
     f.save(file_dir+"input.png")
-    recognized=Recognize_Digit(cv2.imread(file_dir+"input.png", cv2.IMREAD_COLOR))
+    recognized=Recognize_Part(cv2.imread(file_dir+"input.png", cv2.IMREAD_COLOR))
     cv2.imwrite(file_dir+"output.png", recognized)
     return {"url": file_dir+"output.png"}
 
