@@ -8,6 +8,7 @@ from flask_cors import CORS
 import os
 import cv2
 from werkzeug.utils import secure_filename
+import numpy as np
 
 from recognize import Recognize_Part
 PORT=3001
@@ -133,12 +134,13 @@ def get_recognized_img(path):
 
 @app.route('/upload', methods=['POST'])
 def fileUpload():
-    file_dir="recognize_img/"
-    f = request.files['file']
-    f.save(file_dir+"input.png")
-    recognized=Recognize_Part(cv2.imread(file_dir+"input.png", cv2.IMREAD_COLOR))
-    cv2.imwrite(file_dir+"output.png", recognized)
-    return {"url": file_dir+"output.png"}
+    # file_dir="recognize_img/"
+    f = request.files['file'].read()
+    # f.save(file_dir+"input.png")
+    nparr = np.frombuffer(f, np.uint8)
+    img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    recognized=Recognize_Part(img_np)
+    return {"data": recognized}
 
 if __name__ == "__main__":
     app.run(host="localhost", port=PORT)

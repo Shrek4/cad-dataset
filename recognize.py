@@ -3,6 +3,7 @@ from keras.models import load_model
 import numpy as np
 from PIL import Image
 
+img_width, img_height=128, 128
 
 model = load_model('cadmnist.h5')
 
@@ -29,47 +30,30 @@ def make_square(img, max_size, fill_color):
     new_img.paste(old_img, (x, y))
 
     # save image
-    if(max(new_img.size)<150):
-        new_img=new_img.resize((150,150))
+    if(max(new_img.size)<img_width):
+        new_img=new_img.resize((img_width,img_height))
     return np.array(new_img)
 
 def prepare(img):
-    padded= np.pad(img, ((5, 5), (5, 5)), "constant", constant_values=0)
-    squared=make_square(padded, 150, 0)
+    ret, th = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    padded= np.pad(th, ((5, 5), (5, 5)), "constant", constant_values=0)
+    squared=make_square(padded, img_height, 0)
     ret, th = cv2.threshold(squared, 0, 255, cv2.THRESH_OTSU)
     return th
 
 def Recognize_Part(input):
 
-    # image = cv2.imread(FILENAME, cv2.IMREAD_COLOR)
-    image=input
-    gray = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2GRAY)
-    ret, th = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    gray = cv2.cvtColor(input.copy(), cv2.COLOR_BGR2GRAY)
 
-    contours = cv2.findContours(th, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+    img=prepare(gray)
+    img=img.reshape(1,img_width,img_height,1)
+    if(np.any(img)>1): img=img/255.0
 
-    for cnt in contours:
-        x, y, w, h = cv2.boundingRect(cnt)
-        # make a rectangle box around each curve
-        cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 1)
-        
-        digit=prepare(th[y:y + h, x:x + w])
-        digit=digit.reshape(1,150,150,1)
-        digit = digit / 255.0
+    pred = model.predict([img])[0]
+    pred_class = np.argmax(pred)
+    classes=["Подшипник", "Болт", "Гайка", "Сальник", "Шайба"]
 
-        pred = model.predict([digit])[0]
-        final_pred = np.argmax(pred)
-        classes=["bearing", "bolt", "nut", "seal", "washer"]
+    data = classes[pred_class] + ' ' + str(int(max(pred) * 100)) + '%'
 
-        data = classes[final_pred] + ' ' + str(int(max(pred) * 100)) + '%'
-
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        fontScale = 0.5
-        color = (255, 0, 0)
-        thickness = 1
-        cv2.putText(image, data, (x, y - 5), font, fontScale, color, thickness)
-
-
-    # cv2.imwrite("output.png", image)
-    return image
+    return data
 
