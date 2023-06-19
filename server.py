@@ -102,18 +102,13 @@ parts_data=getData()
 
 @app.route('/parts')
 def get_parts():
-    # try:
-    #     data=[]
-    #     for i in range(len(parts)):
-    #         data.append({"id": parts[i]['id'], "class": getClass(parts[i]['class_id']), "standart": getStandart(parts[i]['standart_id']), "size": parts[i]['size'], "images": getImages(parts[i]['id'])})
-    #     return data
-    # except Exception as e:
-    #     print(e)
     try:
         data=[]
         for i in range(len(parts_data)):
             cat_name=parts_data[i]['image_dir']
-            data.append({"id": parts_data[i]['id'], "class": parts_data[i]['class'], "standart": parts_data[i]['standart'], "size": parts_data[i]['size'], "images": [cat_name+'/'+x for x in os.listdir(cat_name)]})
+            data.append({"id": parts_data[i]['id'], "class": parts_data[i]['class'],
+                          "standart": parts_data[i]['standart'], "size": parts_data[i]['size'],
+                            "images": [cat_name+'/'+x for x in os.listdir(cat_name)]})
         return data
     except Exception as e:
         print(e)
