@@ -5,7 +5,7 @@ from PIL import Image
 
 img_width, img_height=128, 128
 
-model = load_model('cadmnist.h5')
+model = load_model('cadparts.h5')
 
 def make_square(img, max_size, fill_color):
     # find image dimensions
